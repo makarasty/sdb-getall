@@ -1,7 +1,7 @@
 const Discord = require("discord.js");
 
 /**
- * @param {Discord.ChannelManager
+ * @typedef {Discord.ChannelManager
  * | Discord.GuildManager
  * | Discord.UserManager
  * | Discord.ThreadManager
@@ -13,21 +13,35 @@ const Discord = require("discord.js");
  * | Discord.RoleManager
  * | Discord.GuildScheduledEventManager
  * | Discord.GuildStickerManager
- * | Discord.VoiceStateManager} base
+ * | Discord.VoiceStateManager
+ * | Discord.CachedManager<any, any, any>} BaseManagers
+*/
+
+/**
+ * @param {BaseManagers} base
  * @param {Discord.Snowflake} id
  */
-async function getAnythingFrom(base, id) {
-	if (!base || !id) return null;
-
+async function baseFetchIfCan(base, id) {
 	try {
-		return base.cache.has(id)
-			? base.cache.get(id) || null
-			: 'fetch' in base
-				? (await base.fetch(id)) || null
-				: null;
+		return 'fetch' in base ? (await base.fetch(id)) || null : null;
 	} catch (error) {
 		return null;
 	}
+}
+
+/**
+ * @param {BaseManagers} base
+ * @param {Discord.Snowflake} id
+ * @param {boolean} [fetchOnly=false] - if true, always trying to fetch the object, doesn't use cache
+ */
+async function getAnythingFrom(base, id, fetchOnly = false) {
+	if (!base || !id) return null;
+
+	if (fetchOnly) return await baseFetchIfCan(base, id);
+
+	return base.cache.has(id)
+		? base.cache.get(id) || null
+		: await baseFetchIfCan(base, id);
 }
 
 /**
@@ -220,6 +234,9 @@ async function guildGetVoiceState(guild, id) {
 }
 
 module.exports = {
+	baseFetchIfCan,
+	getAnythingFrom,
+
 	getGuild,
 	getUser,
 	getEmoji,
@@ -239,6 +256,5 @@ module.exports = {
 	guildGetRole,
 	guildGetScheduledEvent,
 	guildGetSticker,
-	guildGetVoiceState,
-
+	guildGetVoiceState
 }
