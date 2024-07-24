@@ -51,3 +51,5 @@ bot.once("ready", async (client) => {
 
 bot.login(process.env.token)
 ```
+
+*Made with ♥*
