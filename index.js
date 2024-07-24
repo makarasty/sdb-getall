@@ -180,7 +180,7 @@ async function guildGetPresence(guild, id) {
  * @param {Discord.Snowflake} id
  * @returns {Promise<Discord.Role?>}
  */
-async function guildGetPresence(guild, id) {
+async function guildGetRole(guild, id) {
 	const role = await getAnythingFrom(guild?.roles, id)
 
 	return role instanceof Discord.Role ? role : null;
@@ -236,6 +236,7 @@ module.exports = {
 	guildGetInvite,
 	guildGetBan,
 	guildGetPresence,
+	guildGetRole,
 	guildGetScheduledEvent,
 	guildGetSticker,
 	guildGetVoiceState,
