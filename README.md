@@ -46,7 +46,6 @@ bot.once("ready", async (client) => {
 	console.log(await allGet.guildGetSticker(guild, "1265657039728803934"))
 
 	console.log(await allGet.guildGetVoiceState(guild, "509734900182548489"))
-
 });
 
 bot.login(process.env.token)
