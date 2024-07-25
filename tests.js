@@ -104,6 +104,9 @@ bot.once("ready", async (client) => {
 	console.log("Testing getVoiceChannel...");
 	console.log(typeof (await allGet.getVoiceChannel(client, "1247459651436548168"))?.id === "string");
 
+	console.log("Testing getCategoryChannel...");
+	console.log(typeof (await allGet.getCategoryChannel(client, "1064500387995983872"))?.id === "string");
+
 	console.log("Testing getDMChannel...");
 	console.log(typeof (await allGet.getDMChannel(client, "1057686950229852251"))?.id === "string");
 

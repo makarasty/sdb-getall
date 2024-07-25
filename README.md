@@ -4,6 +4,10 @@ library for `discord.js` version `14`+ tested on `discord.js` version `14.15.3`,
 # Installing
 install `npm i sdb-getall`
 
+# Dependencies
+- `discord.js` version `14`+
+- `Node.js` version `16`+
+
 # Some usage example
 ```js
 const allGet = require("./index.js"); // require("sdb-getall")
@@ -24,6 +28,8 @@ bot.once("ready", async (client) => {
 	console.log(await allGet.getTextChannel(client, "1157047546657652786"));
 
 	console.log(await allGet.getVoiceChannel(client, "1247459651436548168"));
+
+	console.log(await allGet.getCategoryChannel(client, "1064500387995983872"));
 
 	console.log(await allGet.getDMChannel(client, "1057686950229852251"));
 

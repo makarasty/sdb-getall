@@ -14,10 +14,12 @@ const Discord = require("discord.js");
  * | Discord.GuildScheduledEventManager
  * | Discord.GuildStickerManager
  * | Discord.VoiceStateManager
- * | Discord.CachedManager<any, any, any>} BaseManagers
+ * | Discord.CachedManager<any, any, any>
+ * } BaseManagers
 */
 
 /**
+ * Attempts to retrieve an object using the 'fetch(id)' method if the 'base' object has a 'fetch' method.
  * @param {BaseManagers} base
  * @param {Discord.Snowflake} id
  */
@@ -32,7 +34,7 @@ async function baseFetchIfCan(base, id) {
 /**
  * @param {BaseManagers} base
  * @param {Discord.Snowflake} id
- * @param {boolean} [fetchOnly=false] - if true, always trying to fetch the object, doesn't use cache
+ * @param {boolean} [fetchOnly=false] - If true, always trying to fetch the object, doesn't use cache
  */
 async function getAnythingFrom(base, id, fetchOnly = false) {
 	if (!base || !id) return null;
@@ -126,7 +128,7 @@ async function getDMChannel(entry, id) {
 /**
  * @param {Discord.Client<true> | Discord.Guild} entry
  * @param {Discord.Snowflake} id
- * @returns {Promise<(Discord.AnyThreadChannel)?>}
+ * @returns {Promise<Discord.AnyThreadChannel?>}
  */
 async function getAnyThread(entry, id) {
 	const thread = await getChannel(entry, id);
@@ -236,19 +238,15 @@ async function guildGetVoiceState(guild, id) {
 module.exports = {
 	baseFetchIfCan,
 	getAnythingFrom,
-
 	getGuild,
 	getUser,
 	getEmoji,
-
 	getChannel,
 	getTextChannel,
 	getVoiceChannel,
 	getCategoryChannel,
 	getDMChannel,
-
 	getAnyThread,
-
 	guildGetMember,
 	guildGetInvite,
 	guildGetBan,
