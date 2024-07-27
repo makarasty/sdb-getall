@@ -63,6 +63,8 @@ bot.once("ready", async (client) => {
 	}
 
 	const toDefaultTest = [
+		allGet.baseFetchIfCan,
+		allGet.getAnythingFrom,
 		allGet.getGuild,
 		allGet.getUser,
 		allGet.getEmoji,
@@ -76,9 +78,11 @@ bot.once("ready", async (client) => {
 		allGet.guildGetInvite,
 		allGet.guildGetBan,
 		allGet.guildGetPresence,
+		allGet.guildGetRole,
 		allGet.guildGetScheduledEvent,
 		allGet.guildGetSticker,
 		allGet.guildGetVoiceState,
+		allGet.channelGetMessage
 	]
 
 	for (const func of toDefaultTest) {

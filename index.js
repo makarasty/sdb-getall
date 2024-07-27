@@ -1,22 +1,8 @@
 const Discord = require("discord.js");
 
 /**
- * @typedef {Discord.ChannelManager
- * | Discord.GuildManager
- * | Discord.UserManager
- * | Discord.ThreadManager
- * | Discord.BaseGuildEmojiManager
- * | Discord.GuildMemberManager
- * | Discord.GuildInviteManager
- * | Discord.GuildBanManager
- * | Discord.PresenceManager
- * | Discord.RoleManager
- * | Discord.GuildScheduledEventManager
- * | Discord.GuildStickerManager
- * | Discord.VoiceStateManager
- * | Discord.CachedManager<any, any, any>
- * } BaseManagers
-*/
+ * @typedef {import('./index.d.ts').BaseManagers} BaseManagers
+ */
 
 /**
  * Attempts to retrieve an object using the 'fetch(id)' method if the 'base' object has a 'fetch' method.
@@ -235,6 +221,17 @@ async function guildGetVoiceState(guild, id) {
 	return voiceState instanceof Discord.VoiceState ? voiceState : null;
 }
 
+/**
+ * @param {Discord.TextBasedChannel} channel
+ * @param {Discord.Snowflake} id
+ * @returns {Promise<Discord.Message?>}
+ */
+async function channelGetMessage(channel, id) {
+	const message = await getAnythingFrom(channel?.messages, id)
+
+	return message instanceof Discord.Message ? message : null;
+}
+
 module.exports = {
 	baseFetchIfCan,
 	getAnythingFrom,
@@ -254,5 +251,6 @@ module.exports = {
 	guildGetRole,
 	guildGetScheduledEvent,
 	guildGetSticker,
-	guildGetVoiceState
+	guildGetVoiceState,
+	channelGetMessage
 }
