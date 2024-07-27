@@ -2,7 +2,8 @@ require('dotenv').config();
 
 const Discord = require("discord.js");
 
-const allGet = require("./index.js");
+// @ts-expect-error
+const allGet = /**@type {import('sdb-getall')}*/(require("./index.js"));
 
 const bot = new Discord.Client({
 	intents: 47007

@@ -1,7 +1,7 @@
 const Discord = require("discord.js");
 
 /**
- * @typedef {import('./index.d.ts').BaseManagers} BaseManagers
+ * @typedef {import('./types.d.ts').BaseManagers} BaseManagers
  */
 
 /**
@@ -27,7 +27,7 @@ async function getAnythingFrom(base, id, fetchOnly = false) {
 
 	if (fetchOnly) return await baseFetchIfCan(base, id);
 
-	return base.cache.has(id)
+	return base.cache?.has(id)
 		? base.cache.get(id) || null
 		: await baseFetchIfCan(base, id);
 }
