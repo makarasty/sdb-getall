@@ -57,6 +57,18 @@ declare module "sdb-getall" {
 		guild: Discord.Guild,
 		id: Discord.Snowflake,
 	): Promise<Discord.GuildMember | null>;
+	function guildGetChannel(
+		guild: Discord.Guild,
+		id: Discord.Snowflake,
+	): Promise<Discord.GuildBasedChannel | null>;
+	function guildGetTextBasedChannel(
+		guild: Discord.Guild,
+		id: Discord.Snowflake,
+	): Promise<Discord.BaseGuildTextChannel | null>;
+	function guildGetVoiceChannel(
+		guild: Discord.Guild,
+		id: Discord.Snowflake,
+	): Promise<Discord.BaseGuildVoiceChannel | null>;
 	function guildGetInvite(
 		guild: Discord.Guild,
 		id: Discord.Snowflake,

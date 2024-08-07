@@ -83,7 +83,10 @@ bot.once("ready", async (client) => {
 		allGet.guildGetScheduledEvent,
 		allGet.guildGetSticker,
 		allGet.guildGetVoiceState,
-		allGet.channelGetMessage
+		allGet.channelGetMessage,
+		allGet.guildGetTextBasedChannel,
+		allGet.guildGetVoiceChannel,
+		allGet.guildGetChannel,
 	]
 
 	for (const func of toDefaultTest) {
@@ -143,6 +146,16 @@ bot.once("ready", async (client) => {
 
 	console.log("Testing guildGetVoiceState...");
 	console.log(typeof (await allGet.guildGetVoiceState(guild, "509734900182548489"))?.id === "string")
+
+	console.log("Testing guildGetTextBasedChannel...");
+	console.log((await allGet.guildGetTextBasedChannel(guild, "1261374403803873311"))?.guildId === guild?.id);
+
+	console.log("Testing guildGetVoiceChannel...");
+	console.log((await allGet.guildGetVoiceChannel(guild, "1064128497964023919"))?.guildId === guild?.id);
+
+	console.log("Testing guildGetChannel...");
+	console.log((await allGet.guildGetChannel(guild, "1261374510372880506"))?.guildId === guild?.id);
+
 
 	console.log("All tests trying!");
 
