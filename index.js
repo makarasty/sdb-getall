@@ -29,7 +29,6 @@ async function getAnythingFrom(base, id, fetchOnly = false) {
 /**
  * @param {Discord.Client<true>} client
  * @param {Discord.Snowflake} id
- * @returns {Promise<Discord.Guild?>}
  */
 async function getGuild(client, id) {
 	const guild = await getAnythingFrom(client?.guilds, id);
@@ -38,7 +37,6 @@ async function getGuild(client, id) {
 /**
  * @param {Discord.Client<true>} client
  * @param {Discord.Snowflake} id
- * @returns {Promise<Discord.User?>}
  */
 async function getUser(client, id) {
 	const user = await getAnythingFrom(client?.users, id);
@@ -47,7 +45,6 @@ async function getUser(client, id) {
 /**
  * @param {Discord.Client<true> | Discord.Guild} entry
  * @param {Discord.Snowflake} id
- * @returns {Promise<Discord.BaseChannel?>}
  */
 async function getChannel(entry, id) {
 	const channel = await getAnythingFrom(entry?.channels, id);
@@ -56,7 +53,6 @@ async function getChannel(entry, id) {
 /**
  * @param {Discord.Client<true> | Discord.Guild} entry
  * @param {Discord.Snowflake} id
- * @returns {Promise<Discord.TextBasedChannel?>}
  */
 async function getTextChannel(entry, id) {
 	const text = await getChannel(entry, id);
@@ -65,7 +61,6 @@ async function getTextChannel(entry, id) {
 /**
  * @param {Discord.Client<true> | Discord.Guild} entry
  * @param {Discord.Snowflake} id
- * @returns {Promise<Discord.VoiceBasedChannel?>}
  */
 async function getVoiceChannel(entry, id) {
 	const voice = await getChannel(entry, id);
@@ -74,7 +69,6 @@ async function getVoiceChannel(entry, id) {
 /**
  * @param {Discord.Client<true> | Discord.Guild} entry
  * @param {Discord.Snowflake} id
- * @returns {Promise<Discord.CategoryChannel?>}
  */
 async function getCategoryChannel(entry, id) {
 	const category = await getChannel(entry, id);
@@ -83,9 +77,6 @@ async function getCategoryChannel(entry, id) {
 /**
  * @param {Discord.Client<true> | Discord.Guild} entry
  * @param {Discord.Snowflake} id
- * @returns {Promise<(Discord.PartialGroupDMChannel
- * | Discord.DMChannel
- * | Discord.PartialDMChannel)?>}
  */
 async function getDMChannel(entry, id) {
 	const dm = await getChannel(entry, id);
@@ -94,7 +85,6 @@ async function getDMChannel(entry, id) {
 /**
  * @param {Discord.Client<true> | Discord.Guild} entry
  * @param {Discord.Snowflake} id
- * @returns {Promise<Discord.AnyThreadChannel?>}
  */
 async function getAnyThread(entry, id) {
 	const thread = await getChannel(entry, id);
@@ -103,7 +93,6 @@ async function getAnyThread(entry, id) {
 /**
  * @param {Discord.Client<true> | Discord.Guild} entry
  * @param {Discord.Snowflake} id
- * @returns {Promise<Discord.GuildEmoji?>}
  */
 async function getEmoji(entry, id) {
 	const emoji = await getAnythingFrom(entry?.emojis, id)
@@ -112,45 +101,30 @@ async function getEmoji(entry, id) {
 /**
  * @param {Discord.Guild} guild
  * @param {Discord.Snowflake} id
- * @returns {Promise<Discord.GuildMember?>}
  */
 async function guildGetMember(guild, id) {
 	const member = await getAnythingFrom(guild?.members, id)
 	return member instanceof Discord.GuildMember ? member : null;
 }
 /**
- * Bad - not recommended for use
  * @param {Discord.Guild} guild
  * @param {Discord.Snowflake} id
- * @returns {Promise<Discord.GuildBasedChannel?>}
  */
 async function guildGetChannel(guild, id) {
 	const channel = await getAnythingFrom(guild?.channels, id);
-	// Do I like this? NO! I HATE IT!!!
-	return channel instanceof Discord.CategoryChannel
-		|| channel instanceof Discord.NewsChannel
-		|| channel instanceof Discord.StageChannel
-		|| channel instanceof Discord.TextChannel
-		|| channel instanceof Discord.VoiceChannel
-		|| channel instanceof Discord.ForumChannel
-		|| channel instanceof Discord.MediaChannel
-		? channel : null;
+	return channel ? channel : null;
 }
 /**
- * Bad - not recommended for use
  * @param {Discord.Guild} guild
  * @param {Discord.Snowflake} id
- * @returns {Promise<Discord.GuildTextBasedChannel?>}
  */
 async function guildGetTextBasedChannel(guild, id) {
 	const text = await guildGetChannel(guild, id);
 	return text?.isTextBased() && 'guild' in text ? text : null;
 }
 /**
- * Bad - not recommended for use
  * @param {Discord.Guild} guild
  * @param {Discord.Snowflake} id
- * @returns {Promise<Discord.BaseGuildVoiceChannel?>}
  */
 async function guildGetVoiceChannel(guild, id) {
 	const voice = await guildGetChannel(guild, id);
@@ -159,7 +133,6 @@ async function guildGetVoiceChannel(guild, id) {
 /**
  * @param {Discord.Guild} guild
  * @param {Discord.Snowflake} id
- * @returns {Promise<Discord.Invite?>}
  */
 async function guildGetInvite(guild, id) {
 	const invite = await getAnythingFrom(guild?.invites, id)
@@ -168,7 +141,6 @@ async function guildGetInvite(guild, id) {
 /**
  * @param {Discord.Guild} guild
  * @param {Discord.Snowflake} id
- * @returns {Promise<Discord.GuildBan?>}
  */
 async function guildGetBan(guild, id) {
 	const ban = await getAnythingFrom(guild?.bans, id)
@@ -177,7 +149,6 @@ async function guildGetBan(guild, id) {
 /**
  * @param {Discord.Guild} guild
  * @param {Discord.Snowflake} id
- * @returns {Promise<Discord.Presence?>}
  */
 async function guildGetPresence(guild, id) {
 	const presence = await getAnythingFrom(guild?.presences, id)
@@ -186,7 +157,6 @@ async function guildGetPresence(guild, id) {
 /**
  * @param {Discord.Guild} guild
  * @param {Discord.Snowflake} id
- * @returns {Promise<Discord.Role?>}
  */
 async function guildGetRole(guild, id) {
 	const role = await getAnythingFrom(guild?.roles, id)
@@ -195,7 +165,6 @@ async function guildGetRole(guild, id) {
 /**
  * @param {Discord.Guild} guild
  * @param {Discord.Snowflake} id
- * @returns {Promise<Discord.GuildScheduledEvent<Discord.GuildScheduledEventStatus>?>}
  */
 async function guildGetScheduledEvent(guild, id) {
 	const scheduledEvent = await getAnythingFrom(guild?.scheduledEvents, id)
@@ -204,7 +173,6 @@ async function guildGetScheduledEvent(guild, id) {
 /**
  * @param {Discord.Guild} guild
  * @param {Discord.Snowflake} id
- * @returns {Promise<Discord.Sticker?>}
  */
 async function guildGetSticker(guild, id) {
 	const sticker = await getAnythingFrom(guild?.stickers, id)
@@ -213,7 +181,6 @@ async function guildGetSticker(guild, id) {
 /**
  * @param {Discord.Guild} guild
  * @param {Discord.Snowflake} id
- * @returns {Promise<Discord.VoiceState?>}
  */
 async function guildGetVoiceState(guild, id) {
 	const voiceState = await getAnythingFrom(guild?.voiceStates, id)
@@ -222,7 +189,6 @@ async function guildGetVoiceState(guild, id) {
 /**
  * @param {Discord.TextBasedChannel} channel
  * @param {Discord.Snowflake} id
- * @returns {Promise<Discord.Message?>}
  */
 async function channelGetMessage(channel, id) {
 	const message = await getAnythingFrom(channel?.messages, id)

@@ -154,8 +154,8 @@ bot.once("ready", async (client) => {
 	console.log((await allGet.guildGetVoiceChannel(guild, "1064128497964023919"))?.guildId === guild?.id);
 
 	console.log("Testing guildGetChannel...");
-	console.log((await allGet.guildGetChannel(guild, "1261374510372880506"))?.guildId === guild?.id);
-
+	const channel = await allGet.guildGetChannel(guild, "1261374510372880506")
+	console.log(channel?.guildId === guild?.id, channel);
 
 	console.log("All tests trying!");
 
