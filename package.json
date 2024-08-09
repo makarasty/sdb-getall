@@ -1,6 +1,6 @@
 {
 	"name": "sdb-getall",
-	"version": "1.0.4",
+	"version": "1.1.0",
 	"description": "Library that allows you to get different information from Discord managers",
 	"main": "index.js",
 	"scripts": {
