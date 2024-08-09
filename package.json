@@ -1,21 +1,46 @@
 {
 	"name": "sdb-getall",
-	"version": "1.1.0",
-	"description": "Library that allows you to get different information from Discord managers",
+	"version": "1.1.1",
+	"description": "A lightweight and optimized library for discord.js that simplifies retrieving objects from Discord managers",
 	"main": "index.js",
+	"types": "index.d.ts",
 	"scripts": {
 		"test": "node tests.js",
-		"start": "node index.js"
+		"start": "node index.js",
+		"lint": "eslint .",
+		"format": "prettier --write ."
 	},
 	"author": "MaKarastY",
 	"license": "MIT",
+	"repository": {
+		"type": "git",
+		"url": "https://github.com/makarasty/sdb-getall"
+	},
+	"keywords": [
+		"discord",
+		"discord.js",
+		"bot",
+		"utility",
+		"manager"
+	],
+	"engines": {
+		"node": ">=16.0.0"
+	},
 	"peerDependencies": {
 		"discord.js": "^14.0.0"
 	},
 	"devDependencies": {
-		"dotenv": "^16.4.5"
+		"dotenv": "^16.4.5",
+		"eslint": "^9.8.0",
+		"prettier": "^3.3.3"
 	},
 	"dependencies": {
 		"sdb-getall": "file:"
-	}
+	},
+	"files": [
+		"index.js",
+		"index.d.ts",
+		"README.md",
+		"LICENSE"
+	]
 }
