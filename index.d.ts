@@ -113,8 +113,9 @@ declare module "sdb-getall" {
 		id: Discord.Snowflake,
 	): Promise<Discord.VoiceState | null>;
 
+
 	export function channelGetMessage(
-		channel: Discord.TextBasedChannel,
+		channel: Discord.TextBasedChannel | Discord.VoiceBasedChannel | Discord.DMChannel | Discord.ThreadChannel | Discord.GuildTextBasedChannel | Discord.BaseGuildTextChannel | Discord.BaseGuildVoiceChannel,
 		id: Discord.Snowflake,
 	): Promise<Discord.Message | null>;
 }

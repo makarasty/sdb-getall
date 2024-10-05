@@ -187,7 +187,7 @@ async function guildGetVoiceState(guild, id) {
 	return voiceState instanceof Discord.VoiceState ? voiceState : null;
 }
 /**
- * @param {Discord.TextBasedChannel} channel
+ * @param {Discord.TextBasedChannel | Discord.VoiceBasedChannel | Discord.DMChannel | Discord.ThreadChannel | Discord.GuildTextBasedChannel | Discord.BaseGuildTextChannel | Discord.BaseGuildVoiceChannel} channel
  * @param {Discord.Snowflake} id
  */
 async function channelGetMessage(channel, id) {
