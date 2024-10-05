@@ -1,6 +1,6 @@
 {
 	"name": "sdb-getall",
-	"version": "1.2.0",
+	"version": "1.2.1",
 	"description": "A lightweight and optimized library for discord.js that simplifies retrieving objects from Discord managers",
 	"main": "index.js",
 	"types": "index.d.ts",
