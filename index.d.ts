@@ -1,11 +1,8 @@
-declare module "sdb-getall" {
-	import * as Discord from "discord.js";
-	import { BaseManagers } from "./types";
+declare module 'sdb-getall' {
+	import * as Discord from 'discord.js';
+	import { BaseManagers } from './types';
 
-	export function baseFetchIfCan(
-		base: BaseManagers,
-		id: Discord.Snowflake,
-	): Promise<any | null>;
+	export function baseFetchIfCan(base: BaseManagers, id: Discord.Snowflake): Promise<any | null>;
 
 	export function getAnythingFrom(
 		base: BaseManagers,
@@ -113,9 +110,15 @@ declare module "sdb-getall" {
 		id: Discord.Snowflake,
 	): Promise<Discord.VoiceState | null>;
 
-
 	export function channelGetMessage(
-		channel: Discord.TextBasedChannel | Discord.VoiceBasedChannel | Discord.DMChannel | Discord.ThreadChannel | Discord.GuildTextBasedChannel | Discord.BaseGuildTextChannel | Discord.BaseGuildVoiceChannel,
+		channel:
+			| Discord.TextBasedChannel
+			| Discord.VoiceBasedChannel
+			| Discord.DMChannel
+			| Discord.ThreadChannel
+			| Discord.GuildTextBasedChannel
+			| Discord.BaseGuildTextChannel
+			| Discord.BaseGuildVoiceChannel,
 		id: Discord.Snowflake,
 	): Promise<Discord.Message | null>;
 }
