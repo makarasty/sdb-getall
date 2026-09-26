@@ -11,7 +11,7 @@ npm install sdb-getall
 ## Dependencies
 
 - `discord.js` version `14`+
-- `Node.js` version `16`+
+- `Node.js` version `18`+
 
 ## Usage Example
 

@@ -1,183 +1,80 @@
-require('dotenv').config();
-
+// Offline checks, no token needed. Live checks against a real guild: `npm run test:live`.
+const assert = require('node:assert/strict');
 const Discord = require('discord.js');
 
-// @ts-expect-error
-const allGet = /**@type {import('sdb-getall')}*/ (require('./index.js'));
-
-const bot = new Discord.Client({
-	intents: 47007,
-});
+const allGet = /** @type {typeof import('./index')} */ (require('./index.js'));
 
 /**
- * @typedef {((client: any, id: any) => Promise<any>)} GetFunction
+ * @param {Map<string, any>} cache
+ * @param {(id: string) => any} [fetch]
  */
-
-bot.once('ready', async (client) => {
-	/**
-	 * @param {GetFunction} func
-	 */
-	async function defaultNullTests(func) {
-		let allPassed = true;
-		const errors = [];
-
-		/** @type {Array<{args: [any, any], expected: any}>} */
-		const tests = [
-			// These are not very useful tests, but better than having none at all.
-			{
-				args: [
-					client,
-					'10000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000',
-				],
-				expected: null,
+function manager(cache, fetch) {
+	const calls = { fetch: 0 };
+	return {
+		calls,
+		/** @type {any} */
+		base: {
+			cache,
+			async fetch(/** @type {string} */ id) {
+				calls.fetch++;
+				if (!fetch) throw new Error('Unknown');
+				return fetch(id);
 			},
-			{ args: [client, undefined], expected: null },
-			{ args: [client, 0], expected: null },
-			{ args: [true, true], expected: null },
-			{ args: [false, false], expected: null },
-			{ args: ['', 0], expected: null },
-			{ args: [client, -12312321], expected: null },
-			{ args: [client, ''], expected: null },
-			{ args: [{ lol: 'kek' }, ''], expected: null },
-			{ args: [{ lol: 'kek' }, { kek: 'lol' }], expected: null },
-			{ args: [undefined, ''], expected: null },
-		];
+		},
+	};
+}
 
-		for (let i = 0; i < tests.length; i++) {
-			const test = tests[i];
-			try {
-				const result = await func.apply(null, test.args);
-				if (result !== test.expected) {
-					allPassed = false;
-					errors.push(`Test ${i + 1} failed: expected ${test.expected}, but got ${result}`);
-				}
-			} catch (error) {
-				allPassed = false;
-				if (error instanceof Error) {
-					errors.push(`Test ${i + 1} threw an error: ${error.message}`);
-				}
-			}
-		}
-
-		if (allPassed) {
-			console.log(true, func.name);
-			return true;
-		} else {
-			console.log('Some tests failed:');
-			errors.forEach((error) => console.log(error));
-			return false;
-		}
-	}
-
-	const toDefaultTest = [
-		allGet.baseFetchIfCan,
-		allGet.getAnythingFrom,
-		allGet.getGuild,
-		allGet.getUser,
-		allGet.getEmoji,
-		allGet.getChannel,
-		allGet.getTextChannel,
-		allGet.getVoiceChannel,
-		allGet.getCategoryChannel,
-		allGet.getDMChannel,
-		allGet.getAnyThread,
-		allGet.guildGetMember,
-		allGet.guildGetInvite,
-		allGet.guildGetBan,
-		allGet.guildGetPresence,
-		allGet.guildGetRole,
-		allGet.guildGetScheduledEvent,
-		allGet.guildGetSticker,
-		allGet.guildGetVoiceState,
-		allGet.channelGetMessage,
-		allGet.guildGetTextBasedChannel,
-		allGet.guildGetVoiceChannel,
-		allGet.guildGetChannel,
+(async () => {
+	// Garbage in, null out, never a throw.
+	const junk = [
+		[undefined, '1'],
+		[null, '1'],
+		[true, true],
+		[false, false],
+		['', 0],
+		[{ lol: 'kek' }, ''],
+		[{ lol: 'kek' }, { kek: 'lol' }],
+		[{ lol: 'kek' }, '1'],
+		[{ cache: new Map(), fetch: 'not a function' }, '1'],
 	];
-
-	for (const func of toDefaultTest) {
-		await defaultNullTests(func);
+	for (const [name, fn] of Object.entries(allGet)) {
+		for (const args of junk) {
+			assert.equal(await /** @type {Function} */ (fn)(...args), null, `${name}(${args})`);
+		}
 	}
 
-	console.log('Testing getGuild...');
-	const guild = await allGet.getGuild(client, '785107327413911592');
-	console.log(typeof guild?.id === 'string');
+	// Cache hit skips the REST call.
+	let m = manager(new Map([['1', 'cached']]));
+	assert.equal(await allGet.getAnythingFrom(m.base, '1'), 'cached');
+	assert.equal(m.calls.fetch, 0);
 
-	console.log('Testing getUser...');
-	console.log(typeof (await allGet.getUser(client, '785082790089719828'))?.id === 'string');
+	// Cache miss falls back to fetch.
+	m = manager(new Map(), (id) => `fetched ${id}`);
+	assert.equal(await allGet.getAnythingFrom(m.base, '2'), 'fetched 2');
+	assert.equal(m.calls.fetch, 1);
 
-	console.log('Testing getChannel...');
-	console.log(typeof (await allGet.getChannel(client, '1157047546657652786'))?.id === 'string');
+	// fetchOnly ignores the cache.
+	m = manager(new Map([['1', 'cached']]), () => 'fetched');
+	assert.equal(await allGet.getAnythingFrom(m.base, '1', true), 'fetched');
 
-	console.log('Testing getEmoji...');
-	console.log(typeof (await allGet.getEmoji(client, '1260198905564499990'))?.id === 'string');
+	// Failed fetch is null, not a rejection.
+	m = manager(new Map());
+	assert.equal(await allGet.getAnythingFrom(m.base, '3'), null);
+	assert.equal(await allGet.baseFetchIfCan(m.base, '3'), null);
 
-	console.log('Testing getTextChannel...');
-	console.log(typeof (await allGet.getTextChannel(client, '1157047546657652786'))?.id === 'string');
+	// Typed getters filter by class.
+	const guild = Object.create(Discord.Guild.prototype);
+	const client = /** @type {any} */ ({ guilds: manager(new Map([['g', guild]])).base });
+	assert.equal(await allGet.getGuild(client, 'g'), guild);
+	assert.equal(await allGet.getUser(/** @type {any} */ ({ users: client.guilds }), 'g'), null);
 
-	console.log('Testing getVoiceChannel...');
-	console.log(
-		typeof (await allGet.getVoiceChannel(client, '1247459651436548168'))?.id === 'string',
-	);
+	const role = Object.create(Discord.Role.prototype);
+	const fakeGuild = /** @type {any} */ ({ roles: manager(new Map(), () => role).base });
+	assert.equal(await allGet.guildGetRole(fakeGuild, 'r'), role);
+	assert.equal(await allGet.guildGetMember(fakeGuild, 'r'), null);
 
-	console.log('Testing getCategoryChannel...');
-	console.log(
-		typeof (await allGet.getCategoryChannel(client, '1064500387995983872'))?.id === 'string',
-	);
-
-	console.log('Testing getDMChannel...');
-	console.log(typeof (await allGet.getDMChannel(client, '1057686950229852251'))?.id === 'string');
-
-	console.log('Testing getAnyThread...');
-	console.log(typeof (await allGet.getAnyThread(client, '1264927327951912960'))?.id === 'string');
-
-	if (!guild) return;
-
-	console.log('Testing guildGetMember...');
-	console.log(typeof (await allGet.guildGetMember(guild, '785082790089719828'))?.id === 'string');
-
-	console.log('Testing guildGetInvite...');
-	console.log(typeof (await allGet.guildGetInvite(guild, 'KYpE44UxCP'))?.url === 'string'); // you can stole invite id xd
-
-	console.log('Testing guildGetBan...');
-	console.log(typeof (await allGet.guildGetBan(guild, '310848622642069504'))?.user.id === 'string');
-
-	console.log('Testing guildGetPresence...');
-	console.log(
-		typeof (await allGet.guildGetPresence(guild, '1090762494366187630'))?.user?.id === 'string',
-	);
-
-	console.log('Testing guildGetRole...');
-	console.log(typeof (await allGet.guildGetRole(guild, '1090928583482036275'))?.id === 'string');
-
-	console.log('Skip testing guildGetScheduledEvent...');
-	//console.log(typeof (await allGet.guildGetScheduledEvent(guild, "idk"))?.id === "string")
-
-	console.log('Testing guildGetSticker...');
-	console.log(typeof (await allGet.guildGetSticker(guild, '1265657039728803934'))?.id === 'string');
-
-	console.log('Testing guildGetVoiceState...');
-	console.log(
-		typeof (await allGet.guildGetVoiceState(guild, '509734900182548489'))?.id === 'string',
-	);
-
-	console.log('Testing guildGetTextBasedChannel...');
-	console.log(
-		(await allGet.guildGetTextBasedChannel(guild, '1261374403803873311'))?.guildId === guild?.id,
-	);
-
-	console.log('Testing guildGetVoiceChannel...');
-	console.log(
-		(await allGet.guildGetVoiceChannel(guild, '1064128497964023919'))?.guildId === guild?.id,
-	);
-
-	console.log('Testing guildGetChannel...');
-	const channel = await allGet.guildGetChannel(guild, '1261374510372880506');
-	console.log(channel?.guildId === guild?.id, channel);
-
-	console.log('All tests trying!');
-
-	await client.destroy();
+	console.log(`ok: ${Object.keys(allGet).length} functions`);
+})().catch((error) => {
+	console.error(error);
+	process.exitCode = 1;
 });
-
-bot.login(process.env.token);

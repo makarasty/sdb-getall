@@ -21,8 +21,8 @@ async function baseFetchIfCan(base, id) {
  */
 async function getAnythingFrom(base, id, fetchOnly = false) {
 	if (!base || !id) return null;
-	if (fetchOnly) return await baseFetchIfCan(base, id);
-	return base.cache?.has(id) ? base.cache.get(id) || null : await baseFetchIfCan(base, id);
+	if (fetchOnly) return baseFetchIfCan(base, id);
+	return base.cache?.get(id) ?? baseFetchIfCan(base, id);
 }
 /**
  * @param {Discord.Client<true>} client
@@ -109,8 +109,7 @@ async function guildGetMember(guild, id) {
  * @param {Discord.Snowflake} id
  */
 async function guildGetChannel(guild, id) {
-	const channel = await getAnythingFrom(guild?.channels, id);
-	return channel ? channel : null;
+	return getAnythingFrom(guild?.channels, id);
 }
 /**
  * @param {Discord.Guild} guild

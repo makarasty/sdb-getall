@@ -1,20 +1,19 @@
 {
 	"name": "sdb-getall",
-	"version": "2.1.0",
+	"version": "2.1.1",
 	"description": "A lightweight and optimized library for discord.js that simplifies retrieving objects from Discord managers",
 	"main": "index.js",
 	"types": "index.d.ts",
 	"scripts": {
 		"test": "node tests.js",
-		"start": "node index.js",
-		"lint": "eslint .",
+		"test:live": "node --env-file=.env tests.live.js",
 		"format": "prettier --write ."
 	},
 	"author": "MaKarastY",
 	"license": "MIT",
 	"repository": {
 		"type": "git",
-		"url": "https://github.com/makarasty/sdb-getall"
+		"url": "git+https://github.com/makarasty/sdb-getall.git"
 	},
 	"keywords": [
 		"discord",
@@ -24,18 +23,14 @@
 		"manager"
 	],
 	"engines": {
-		"node": ">=16.0.0"
+		"node": ">=18"
 	},
 	"peerDependencies": {
 		"discord.js": "^14.0.0"
 	},
 	"devDependencies": {
-		"dotenv": "^17.3.1",
-		"eslint": "^10.0.2",
-		"prettier": "^3.8.1"
-	},
-	"dependencies": {
-		"sdb-getall": "file:"
+		"discord.js": "^14.27.0",
+		"prettier": "^3.9.9"
 	},
 	"files": [
 		"index.js",
